@@ -1,0 +1,944 @@
+{
+ "charts": {
+  "selectedLegends": {
+   "extruder": true,
+   "extruder#target": true,
+   "extruder#power": false,
+   "heater_bed": true,
+   "heater_bed#target": true,
+   "heater_bed#power": false,
+   "temperature_fan chamberfan": true,
+   "temperature_fan chamberfan#target": true,
+   "temperature_fan chamberfan#speed": true,
+   "temperature_sensor CANBOARD": true,
+   "temperature_sensor chamber": true
+  }
+ },
+ "console": {
+  "commandHistory": [
+   "CARTOGRAPHER_TOUCH_CALIBRATE",
+   "CARTOGRAPHER_SCAN_CALIBRATE",
+   "CARTOGRAPHER_SCAN_CALIBRATE",
+   "g28 y",
+   "g28 x",
+   "CARTOGRAPHER_SCAN_CALIBRATE",
+   "g28",
+   "PID_CALIBRATE HEATER=extruder TARGET=270",
+   "PID_CALIBRATE HEATER=heater_bed TARGET=100",
+   "SET_FAN_SPEED FAN=Nevermore SPEED=.5",
+   "SET_TEMPERATURE_FAN_TARGET TEMPERATURE_FAN=chamberfan TARGET=57",
+   "Z_TILT_ADJUST",
+   "G28",
+   "Z_TILT_ADJUST",
+   "PID_CALIBRATE HEATER=heater_bed TARGET=100",
+   "Z_TILT_ADJUST",
+   "Z_TILT_ADJUST",
+   "PID_CALIBRATE HEATER=heater_bed TARGET=100",
+   "PID_CALIBRATE HEATER=heater_bed TARGET=100",
+   "SHAPER_CALIBRATE"
+  ]
+ },
+ "layout": {
+  "layouts": {
+   "dashboard": {
+    "container1": [
+     {
+      "id": "printer-status-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "jobs-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "spoolman-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "mmu-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "toolhead-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "runout-sensors-card",
+      "enabled": false,
+      "collapsed": false
+     },
+     {
+      "id": "printer-limits-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "retract-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "gcode-preview-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "bed-mesh-card",
+      "enabled": true,
+      "collapsed": false
+     }
+    ],
+    "container2": [
+     {
+      "id": "temperature-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "sensors-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "outputs-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "camera-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "console-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "job-queue-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "macros-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "beacon-card",
+      "enabled": false,
+      "collapsed": false
+     }
+    ],
+    "container3": [],
+    "container4": []
+   },
+   "diagnostics": {
+    "container1": [
+     {
+      "id": "7f49765b-5dcd-4f8f-a0df-93e39d6f0168",
+      "enabled": true,
+      "title": "Speeds",
+      "collapsed": false,
+      "height": 300,
+      "icon": "motion",
+      "axes": [
+       {
+        "enabled": true,
+        "unit": "mm/s",
+        "showLegend": true,
+        "metrics": [
+         {
+          "collector": "printer.motion_report.live_velocity",
+          "name": "Velocity",
+          "style": {
+           "lineStyle": "solid",
+           "lineColor": "#2196f3",
+           "fillColor": null,
+           "fillOpacity": 0,
+           "displayLegend": true
+          }
+         },
+         {
+          "collector": "printer.toolhead.max_velocity",
+          "name": "Max Velocity",
+          "style": {
+           "lineStyle": "dotted",
+           "lineColor": "#0075d2",
+           "fillColor": null,
+           "fillOpacity": 0,
+           "displayLegend": false
+          }
+         }
+        ]
+       },
+       {
+        "enabled": true,
+        "unit": "mm\u00b3/s",
+        "showLegend": true,
+        "max": 20,
+        "metrics": [
+         {
+          "collector": "printer.motion_report.live_extruder_velocity * Math.PI * (printer.configfile.settings.extruder.filament_diameter / 2) ** 2",
+          "name": "Flow",
+          "style": {
+           "lineStyle": "solid",
+           "lineColor": "#b12f36",
+           "fillColor": null,
+           "fillOpacity": 5,
+           "displayLegend": true
+          }
+         },
+         {
+          "collector": "12",
+          "name": "Max Flow",
+          "style": {
+           "lineStyle": "dashed",
+           "lineColor": "#820007",
+           "fillColor": null,
+           "fillOpacity": 0,
+           "displayLegend": false
+          }
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "dashboard-xl-_TRUSTED_USER_": {
+    "container1": [
+     {
+      "id": "printer-status-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "jobs-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "spoolman-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "mmu-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "toolhead-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "outputs-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "runout-sensors-card",
+      "enabled": false,
+      "collapsed": false
+     },
+     {
+      "id": "printer-limits-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "retract-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "gcode-preview-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "bed-mesh-card",
+      "enabled": true,
+      "collapsed": false
+     }
+    ],
+    "container2": [
+     {
+      "id": "temperature-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "sensors-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "camera-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "console-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "job-queue-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "macros-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "beacon-card",
+      "enabled": false,
+      "collapsed": false
+     },
+     {
+      "id": "afc-card",
+      "enabled": true,
+      "collapsed": false
+     }
+    ],
+    "container3": [],
+    "container4": []
+   },
+   "dashboard-lg-_TRUSTED_USER_": {
+    "container1": [
+     {
+      "id": "printer-status-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "jobs-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "spoolman-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "mmu-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "toolhead-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "runout-sensors-card",
+      "enabled": false,
+      "collapsed": false
+     },
+     {
+      "id": "printer-limits-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "retract-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "gcode-preview-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "bed-mesh-card",
+      "enabled": true,
+      "collapsed": false
+     }
+    ],
+    "container2": [
+     {
+      "id": "temperature-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "sensors-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "outputs-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "camera-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "console-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "job-queue-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "macros-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "beacon-card",
+      "enabled": false,
+      "collapsed": false
+     }
+    ],
+    "container3": [],
+    "container4": []
+   },
+   "dashboard-md-_TRUSTED_USER_": {
+    "container1": [
+     {
+      "id": "printer-status-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "jobs-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "spoolman-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "mmu-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "toolhead-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "runout-sensors-card",
+      "enabled": false,
+      "collapsed": false
+     },
+     {
+      "id": "printer-limits-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "retract-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "gcode-preview-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "bed-mesh-card",
+      "enabled": true,
+      "collapsed": false
+     }
+    ],
+    "container2": [
+     {
+      "id": "temperature-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "sensors-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "outputs-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "camera-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "console-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "job-queue-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "macros-card",
+      "enabled": true,
+      "collapsed": false
+     },
+     {
+      "id": "beacon-card",
+      "enabled": false,
+      "collapsed": false
+     }
+    ],
+    "container3": [],
+    "container4": []
+   }
+  }
+ },
+ "macros": {
+  "expanded": [
+   0
+  ],
+  "categories": [
+   {
+    "id": "f19d91b5-4d47-4ef1-bf14-0e8da8c75c89",
+    "name": "Print Control"
+   },
+   {
+    "id": "8e395432-4fa7-49d7-8399-0857571dd741",
+    "name": "Filament"
+   },
+   {
+    "id": "8417a725-5060-4842-8b59-798957471147",
+    "name": "Nozzle & Maintenance"
+   },
+   {
+    "id": "84765d82-7006-4376-b141-b1bc02653fe3",
+    "name": "Bed Fans & Heaters"
+   },
+   {
+    "id": "27e9ea65-93cf-4c3a-8fc4-3449e7c8bdbf",
+    "name": "Stealthburner LEDs"
+   },
+   {
+    "id": "66dce5e7-cb44-466d-bd9a-b1fc2857ffaa",
+    "name": "Advanced (slicer / internal)"
+   }
+  ],
+  "stored": [
+   {
+    "name": "pause",
+    "alias": "Pause",
+    "visible": true,
+    "disabledWhilePrinting": false,
+    "color": "#FB8C00",
+    "categoryId": "f19d91b5-4d47-4ef1-bf14-0e8da8c75c89"
+   },
+   {
+    "name": "resume",
+    "alias": "Resume",
+    "visible": true,
+    "disabledWhilePrinting": false,
+    "color": "#43A047",
+    "categoryId": "f19d91b5-4d47-4ef1-bf14-0e8da8c75c89"
+   },
+   {
+    "name": "cancel_print",
+    "alias": "Cancel Print",
+    "visible": true,
+    "disabledWhilePrinting": false,
+    "color": "#E53935",
+    "categoryId": "f19d91b5-4d47-4ef1-bf14-0e8da8c75c89"
+   },
+   {
+    "name": "set_pause_next_layer",
+    "alias": "Pause Next Layer",
+    "visible": true,
+    "disabledWhilePrinting": false,
+    "color": "#43A047",
+    "categoryId": "f19d91b5-4d47-4ef1-bf14-0e8da8c75c89"
+   },
+   {
+    "name": "set_pause_at_layer",
+    "alias": "Pause At Layer",
+    "visible": true,
+    "disabledWhilePrinting": false,
+    "color": "#43A047",
+    "categoryId": "f19d91b5-4d47-4ef1-bf14-0e8da8c75c89"
+   },
+   {
+    "name": "m600",
+    "alias": "Filament Change (M600)",
+    "visible": true,
+    "disabledWhilePrinting": false,
+    "color": "#FB8C00",
+    "categoryId": "f19d91b5-4d47-4ef1-bf14-0e8da8c75c89"
+   },
+   {
+    "name": "load_filament",
+    "alias": "Load Filament",
+    "visible": true,
+    "disabledWhilePrinting": true,
+    "color": "#FB8C00",
+    "categoryId": "8e395432-4fa7-49d7-8399-0857571dd741"
+   },
+   {
+    "name": "unload_filament",
+    "alias": "Unload Filament",
+    "visible": true,
+    "disabledWhilePrinting": true,
+    "color": "#FB8C00",
+    "categoryId": "8e395432-4fa7-49d7-8399-0857571dd741"
+   },
+   {
+    "name": "purge_line",
+    "alias": "Purge Line",
+    "visible": true,
+    "disabledWhilePrinting": true,
+    "color": "#FB8C00",
+    "categoryId": "8e395432-4fa7-49d7-8399-0857571dd741"
+   },
+   {
+    "name": "clean_nozzle",
+    "alias": "Clean Nozzle",
+    "visible": true,
+    "disabledWhilePrinting": true,
+    "color": "#1E88E5",
+    "categoryId": "8417a725-5060-4842-8b59-798957471147"
+   },
+   {
+    "name": "toggle_nozzle_clean",
+    "alias": "Toggle Auto Nozzle Clean",
+    "visible": true,
+    "disabledWhilePrinting": false,
+    "color": "#1E88E5",
+    "categoryId": "8417a725-5060-4842-8b59-798957471147"
+   },
+   {
+    "name": "maint_pos",
+    "alias": "Maintenance Position",
+    "visible": true,
+    "disabledWhilePrinting": true,
+    "color": "#1E88E5",
+    "categoryId": "8417a725-5060-4842-8b59-798957471147"
+   },
+   {
+    "name": "bedfansslow",
+    "alias": "Bed Fans Slow",
+    "visible": true,
+    "disabledWhilePrinting": false,
+    "color": "#00ACC1",
+    "categoryId": "84765d82-7006-4376-b141-b1bc02653fe3"
+   },
+   {
+    "name": "bedfansmed",
+    "alias": "Bed Fans Medium",
+    "visible": true,
+    "disabledWhilePrinting": false,
+    "color": "#00ACC1",
+    "categoryId": "84765d82-7006-4376-b141-b1bc02653fe3"
+   },
+   {
+    "name": "bedfansfast",
+    "alias": "Bed Fans Fast",
+    "visible": true,
+    "disabledWhilePrinting": false,
+    "color": "#00ACC1",
+    "categoryId": "84765d82-7006-4376-b141-b1bc02653fe3"
+   },
+   {
+    "name": "bedfansoff",
+    "alias": "Bed Fans Off",
+    "visible": true,
+    "disabledWhilePrinting": false,
+    "color": "#757575",
+    "categoryId": "84765d82-7006-4376-b141-b1bc02653fe3"
+   },
+   {
+    "name": "turn_off_heaters",
+    "alias": "Turn Off Heaters",
+    "visible": true,
+    "disabledWhilePrinting": false,
+    "color": "#E53935",
+    "categoryId": "84765d82-7006-4376-b141-b1bc02653fe3"
+   },
+   {
+    "name": "set_nozzle_leds_on",
+    "alias": "Nozzle LEDs On",
+    "visible": true,
+    "disabledWhilePrinting": false,
+    "color": "#8E24AA",
+    "categoryId": "27e9ea65-93cf-4c3a-8fc4-3449e7c8bdbf"
+   },
+   {
+    "name": "set_nozzle_leds_off",
+    "alias": "Nozzle LEDs Off",
+    "visible": true,
+    "disabledWhilePrinting": false,
+    "color": "#757575",
+    "categoryId": "27e9ea65-93cf-4c3a-8fc4-3449e7c8bdbf"
+   },
+   {
+    "name": "set_logo_leds_off",
+    "alias": "Logo LEDs Off",
+    "visible": true,
+    "disabledWhilePrinting": false,
+    "color": "#757575",
+    "categoryId": "27e9ea65-93cf-4c3a-8fc4-3449e7c8bdbf"
+   },
+   {
+    "name": "status_off",
+    "alias": "All LEDs Off",
+    "visible": true,
+    "disabledWhilePrinting": false,
+    "color": "#757575",
+    "categoryId": "27e9ea65-93cf-4c3a-8fc4-3449e7c8bdbf"
+   },
+   {
+    "name": "status_ready",
+    "alias": "Ready",
+    "visible": true,
+    "disabledWhilePrinting": false,
+    "color": "#8E24AA",
+    "categoryId": "27e9ea65-93cf-4c3a-8fc4-3449e7c8bdbf"
+   },
+   {
+    "name": "status_busy",
+    "alias": "Busy",
+    "visible": true,
+    "disabledWhilePrinting": false,
+    "color": "#8E24AA",
+    "categoryId": "27e9ea65-93cf-4c3a-8fc4-3449e7c8bdbf"
+   },
+   {
+    "name": "status_heating",
+    "alias": "Heating",
+    "visible": true,
+    "disabledWhilePrinting": false,
+    "color": "#8E24AA",
+    "categoryId": "27e9ea65-93cf-4c3a-8fc4-3449e7c8bdbf"
+   },
+   {
+    "name": "status_homing",
+    "alias": "Homing",
+    "visible": true,
+    "disabledWhilePrinting": false,
+    "color": "#8E24AA",
+    "categoryId": "27e9ea65-93cf-4c3a-8fc4-3449e7c8bdbf"
+   },
+   {
+    "name": "status_leveling",
+    "alias": "Leveling",
+    "visible": true,
+    "disabledWhilePrinting": false,
+    "color": "#8E24AA",
+    "categoryId": "27e9ea65-93cf-4c3a-8fc4-3449e7c8bdbf"
+   },
+   {
+    "name": "status_meshing",
+    "alias": "Meshing",
+    "visible": true,
+    "disabledWhilePrinting": false,
+    "color": "#8E24AA",
+    "categoryId": "27e9ea65-93cf-4c3a-8fc4-3449e7c8bdbf"
+   },
+   {
+    "name": "status_calibrating_z",
+    "alias": "Calibrating Z",
+    "visible": true,
+    "disabledWhilePrinting": false,
+    "color": "#8E24AA",
+    "categoryId": "27e9ea65-93cf-4c3a-8fc4-3449e7c8bdbf"
+   },
+   {
+    "name": "status_cleaning",
+    "alias": "Cleaning",
+    "visible": true,
+    "disabledWhilePrinting": false,
+    "color": "#8E24AA",
+    "categoryId": "27e9ea65-93cf-4c3a-8fc4-3449e7c8bdbf"
+   },
+   {
+    "name": "status_printing",
+    "alias": "Printing",
+    "visible": true,
+    "disabledWhilePrinting": false,
+    "color": "#8E24AA",
+    "categoryId": "27e9ea65-93cf-4c3a-8fc4-3449e7c8bdbf"
+   },
+   {
+    "name": "print_start",
+    "alias": "PRINT_START",
+    "visible": true,
+    "disabledWhilePrinting": true,
+    "color": "#546E7A",
+    "categoryId": "66dce5e7-cb44-466d-bd9a-b1fc2857ffaa"
+   },
+   {
+    "name": "print_end",
+    "alias": "PRINT_END",
+    "visible": true,
+    "disabledWhilePrinting": true,
+    "color": "#546E7A",
+    "categoryId": "66dce5e7-cb44-466d-bd9a-b1fc2857ffaa"
+   },
+   {
+    "name": "m140",
+    "alias": "",
+    "visible": false,
+    "disabledWhilePrinting": false,
+    "color": "",
+    "categoryId": null
+   },
+   {
+    "name": "m190",
+    "alias": "",
+    "visible": false,
+    "disabledWhilePrinting": false,
+    "color": "",
+    "categoryId": null
+   },
+   {
+    "name": "m900",
+    "alias": "",
+    "visible": false,
+    "disabledWhilePrinting": false,
+    "color": "",
+    "categoryId": null
+   },
+   {
+    "name": "t0",
+    "alias": "",
+    "visible": false,
+    "disabledWhilePrinting": false,
+    "color": "",
+    "categoryId": null
+   },
+   {
+    "name": "set_heater_temperature",
+    "alias": "",
+    "visible": false,
+    "disabledWhilePrinting": false,
+    "color": "",
+    "categoryId": null
+   },
+   {
+    "name": "set_print_stats_info",
+    "alias": "",
+    "visible": false,
+    "disabledWhilePrinting": false,
+    "color": "",
+    "categoryId": null
+   }
+  ]
+ },
+ "sensors": {},
+ "uiSettings": {
+  "theme": {
+   "isDark": true,
+   "logo": {
+    "src": "logo_voron.svg"
+   },
+   "color": "#0fc7ff",
+   "backgroundLogo": true
+  },
+  "dashboard": {
+   "tempPresets": [
+    {
+     "id": "0209309c-ff9c-4330-87fd-819b5ef9ffe5",
+     "name": "ABS",
+     "values": {
+      "extruder": {
+       "value": 180,
+       "type": "heater",
+       "active": true
+      },
+      "heater_bed": {
+       "value": 110,
+       "type": "heater",
+       "active": true
+      },
+      "chamberfan": {
+       "value": 57,
+       "type": "fan",
+       "active": true
+      }
+     },
+     "gcode": "SET_FAN_SPEED FAN=Nevermore SPEED=.5"
+    },
+    {
+     "id": "bc36cdc1-68ed-457f-b404-834ec551f820",
+     "name": "Cold_Pull_ABS",
+     "values": {
+      "extruder": {
+       "value": 185,
+       "type": "heater",
+       "active": true
+      },
+      "heater_bed": {
+       "value": 0,
+       "type": "heater",
+       "active": false
+      },
+      "chamberfan": {
+       "value": 0,
+       "type": "fan",
+       "active": false
+      }
+     }
+    }
+   ]
+  },
+  "gcodePreview": {
+   "followProgress": false,
+   "showParts": true,
+   "showPreviousLayer": false,
+   "showExtrusions": true,
+   "showRetractions": true
+  },
+  "general": {
+   "showRateOfChange": true,
+   "instanceName": "Trident_250",
+   "enableVersionNotifications": false
+  },
+  "fileSystem": {
+   "sortBy": {
+    "config": "name",
+    "gcodes": "modified"
+   },
+   "sortDesc": {
+    "config": true,
+    "gcodes": true,
+    "logs": true
+   }
+  },
+  "tableHeaders": {
+   "gcodes_jobs": [
+    {
+     "value": "modified",
+     "visible": true
+    }
+   ]
+  }
+ },
+ "webcams": {
+  "activeWebcam": "6212475e-5218-4aa4-9d29-d0a4ac7287db"
+ }
+}
