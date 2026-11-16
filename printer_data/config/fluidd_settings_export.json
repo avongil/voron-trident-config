@@ -514,7 +514,12 @@
  },
  "macros": {
   "expanded": [
-   0
+   0,
+   1,
+   2,
+   3,
+   4,
+   5
   ],
   "categories": [
    {
@@ -684,7 +689,7 @@
     "alias": "Nozzle LEDs On",
     "visible": true,
     "disabledWhilePrinting": false,
-    "color": "#8E24AA",
+    "color": "#FFFFFF",
     "categoryId": "27e9ea65-93cf-4c3a-8fc4-3449e7c8bdbf"
    },
    {
@@ -716,7 +721,7 @@
     "alias": "Ready",
     "visible": true,
     "disabledWhilePrinting": false,
-    "color": "#8E24AA",
+    "color": "#FFFFFF",
     "categoryId": "27e9ea65-93cf-4c3a-8fc4-3449e7c8bdbf"
    },
    {
@@ -724,7 +729,7 @@
     "alias": "Busy",
     "visible": true,
     "disabledWhilePrinting": false,
-    "color": "#8E24AA",
+    "color": "#FF0000",
     "categoryId": "27e9ea65-93cf-4c3a-8fc4-3449e7c8bdbf"
    },
    {
@@ -732,7 +737,7 @@
     "alias": "Heating",
     "visible": true,
     "disabledWhilePrinting": false,
-    "color": "#8E24AA",
+    "color": "#FF9900",
     "categoryId": "27e9ea65-93cf-4c3a-8fc4-3449e7c8bdbf"
    },
    {
@@ -740,7 +745,7 @@
     "alias": "Homing",
     "visible": true,
     "disabledWhilePrinting": false,
-    "color": "#8E24AA",
+    "color": "#00FF55",
     "categoryId": "27e9ea65-93cf-4c3a-8fc4-3449e7c8bdbf"
    },
    {
@@ -748,7 +753,7 @@
     "alias": "Leveling",
     "visible": true,
     "disabledWhilePrinting": false,
-    "color": "#8E24AA",
+    "color": "#FF33CC",
     "categoryId": "27e9ea65-93cf-4c3a-8fc4-3449e7c8bdbf"
    },
    {
@@ -756,7 +761,7 @@
     "alias": "Meshing",
     "visible": true,
     "disabledWhilePrinting": false,
-    "color": "#8E24AA",
+    "color": "#33FF00",
     "categoryId": "27e9ea65-93cf-4c3a-8fc4-3449e7c8bdbf"
    },
    {
@@ -764,7 +769,7 @@
     "alias": "Calibrating Z",
     "visible": true,
     "disabledWhilePrinting": false,
-    "color": "#8E24AA",
+    "color": "#FF0070",
     "categoryId": "27e9ea65-93cf-4c3a-8fc4-3449e7c8bdbf"
    },
    {
@@ -772,7 +777,7 @@
     "alias": "Cleaning",
     "visible": true,
     "disabledWhilePrinting": false,
-    "color": "#8E24AA",
+    "color": "#000AFF",
     "categoryId": "27e9ea65-93cf-4c3a-8fc4-3449e7c8bdbf"
    },
    {
@@ -780,7 +785,7 @@
     "alias": "Printing",
     "visible": true,
     "disabledWhilePrinting": false,
-    "color": "#8E24AA",
+    "color": "#FF0000",
     "categoryId": "27e9ea65-93cf-4c3a-8fc4-3449e7c8bdbf"
    },
    {
