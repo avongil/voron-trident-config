@@ -600,7 +600,7 @@
     "name": "load_filament",
     "alias": "Load Filament",
     "visible": true,
-    "disabledWhilePrinting": true,
+    "disabledWhilePrinting": false,
     "color": "#FB8C00",
     "categoryId": "8e395432-4fa7-49d7-8399-0857571dd741"
    },
@@ -608,7 +608,7 @@
     "name": "unload_filament",
     "alias": "Unload Filament",
     "visible": true,
-    "disabledWhilePrinting": true,
+    "disabledWhilePrinting": false,
     "color": "#FB8C00",
     "categoryId": "8e395432-4fa7-49d7-8399-0857571dd741"
    },
@@ -846,6 +846,30 @@
    },
    {
     "name": "set_print_stats_info",
+    "alias": "",
+    "visible": false,
+    "disabledWhilePrinting": false,
+    "color": "",
+    "categoryId": null
+   },
+   {
+    "name": "t1",
+    "alias": "",
+    "visible": false,
+    "disabledWhilePrinting": false,
+    "color": "",
+    "categoryId": null
+   },
+   {
+    "name": "t2",
+    "alias": "",
+    "visible": false,
+    "disabledWhilePrinting": false,
+    "color": "",
+    "categoryId": null
+   },
+   {
+    "name": "t3",
     "alias": "",
     "visible": false,
     "disabledWhilePrinting": false,
