@@ -1,0 +1,939 @@
+#####################################################################
+# Voron Design Trident 250 BigTreeTech OctoPus V1 TMC2209 UART config
+#####################################################################
+
+[include fluidd.cfg]
+# This file contains common pin mappings for the BigTreeTech Octopus V1.
+# To use this config, the firmware should be compiled for the STM32F446 with a "32KiB bootloader"
+# Enable "extra low-level configuration options" and select the "12MHz crystal" as clock reference
+
+# after running "make", copy the generated "klipper/out/klipper.bin" file to a
+# file named "firmware.bin" on an SD card and then restart the OctoPus with that SD card.
+
+# See docs/Config_Reference.md for a description of parameters.
+
+## *** THINGS TO CHANGE/CHECK: ***
+## MCU paths                            [mcu] section
+## Thermistor types                     [extruder] and [heater_bed] sections - See https://www.klipper3d.org/Config_Reference.html#common-thermistors for common thermistor types
+## Leadscrew Rotation Distance          [stepper_z], [stepper_z1], [stepper_z2]
+## Z Endstop Switch location            [safe_z_home] section
+## Z Endstop Switch  offset for Z0      [stepper_z] section
+## PID tune                             [extruder] and [heater_bed] sections
+## Probe pin                            [probe] section
+## Fine tune E steps                    [extruder] section
+
+#[include mainsail.cfg]
+[include stealthburner_leds.cfg]
+[include purge_line.cfg]
+[include nozzle_scrub.cfg]
+[include bedfans.cfg]
+[include toolhead_btt_ebbcan_G0B1_v1.2.cfg]
+
+#[include bigtreetech-mms/mms/mms.cfg]
+
+#[include usb_adxl.cfg] # Uncomment this for input shaper tuning
+
+[mcu]
+##  Obtain definition by "ls -l /dev/serial/by-id/" then unplug to verify
+##--------------------------------------------------------------------
+serial: /dev/serial/by-id/usb-Klipper_stm32f446xx_1F003D00115053424E363620-if00
+restart_method: command
+
+
+#--------------------------Printer--------------------------
+[printer]
+kinematics: corexy
+max_velocity: 600
+max_accel: 4500             #Max 4000
+max_z_velocity: 15          #Max 15 for 12V TMC Drivers, can increase for 24V
+max_z_accel: 100
+square_corner_velocity: 5.0
+minimum_cruise_ratio: 0.5
+
+#####################################################################
+#   X/Y Stepper Settings
+#####################################################################
+
+##  B Stepper - Left
+##  Connected to MOTOR_0
+##  Endstop connected to DIAG_0
+[stepper_x]
+step_pin: PF13
+dir_pin: PF12
+enable_pin: !PF14
+rotation_distance: 39.80569
+microsteps: 32
+full_steps_per_rotation:200  #set to 400 for 0.9 degree stepper
+endstop_pin: PG6
+position_min: 0
+##--------------------------------------------------------------------
+
+##  Uncomment below for 250mm build
+position_endstop: 250
+position_max: 250
+
+
+##--------------------------------------------------------------------
+homing_speed: 35   #Max 100
+homing_retract_dist: 5
+homing_positive_dir: true
+
+##  Make sure to update below for your relevant driver (2208 or 2209)
+[tmc2209 stepper_x]
+uart_pin: PC4
+interpolate: False
+run_current: 1.0
+sense_resistor: 0.110
+stealthchop_threshold: 0
+
+##  A Stepper - Right
+##  Connected to MOTOR_1
+##  Endstop connected to DIAG_1
+[stepper_y]
+step_pin: PG0
+dir_pin: PG1
+enable_pin: !PF15
+rotation_distance: 39.75381
+microsteps: 32
+full_steps_per_rotation:200  #set to 400 for 0.9 degree stepper
+endstop_pin: PG9
+position_min: 0
+##--------------------------------------------------------------------
+
+##  Uncomment for 250mm build
+position_endstop: 255
+position_max: 257 # 257 is max! 258 hits hard stop
+
+##--------------------------------------------------------------------
+homing_speed: 35  #Max 100
+homing_retract_dist: 5
+homing_positive_dir: true
+
+##  Make sure to update below for your relevant driver (2208 or 2209)
+[tmc2209 stepper_y]
+uart_pin: PD11
+interpolate: False
+run_current: 1.0
+sense_resistor: 0.110
+stealthchop_threshold: 0
+
+#####################################################################
+#   Z Stepper Settings
+#####################################################################
+
+##  Z0 Stepper - Front Left
+##  Connected to MOTOR_2
+##  Endstop connected to DIAG_2
+[stepper_z]
+step_pin: PF11
+dir_pin: !PG3
+enable_pin: !PG5
+# Rotation Distance for TR8x8 = 8, TR8x4 = 4, TR8x2 = 2
+rotation_distance: 4
+microsteps: 32
+###endstop_pin: PG10
+endstop_pin: probe:z_virtual_endstop
+homing_retract_dist: 0
+#endstop_pin: probe:z_virtual_endstop  # for klicky as virtual endstop. Must comment out enstop_pin and position_endstop.
+##  Z-position of nozzle (in mm) to z-endstop trigger point relative to print surface (Z0)
+##  (+) value = endstop above Z0, (-) value = endstop below
+##  Increasing position_endstop brings nozzle closer to the bed
+##  After you run Z_ENDSTOP_CALIBRATE, position_endstop will be stored at the very end of your config
+
+### BUILD PLATE SELECT WITH ENDSTOP ADJUSTMENT
+
+#position_endstop = 0
+#position_endstop = -1.250 #voron textured build plate
+#position_endstop = -1.300 # Kobra textured build plate
+#position_endstop = -1.650 # micro texture build plate
+
+## All builds use same Max Z
+position_max: 250
+position_min: -5.0
+homing_speed: 8. # Leadscrews are slower than 2.4, 10 is a recommended max.
+second_homing_speed: 2.0
+#homing_retract_dist: 5.0
+
+##  Make sure to update below for your relevant driver (2208 or 2209)
+
+[mcu cartographer] # See https://www.klipper3d.org/Config_Reference.html#mcu
+# Remove either the serial or canbus_uuid line dependant on your setup.
+canbus_uuid: dd25ab1f879f
+
+[cartographer]
+mcu: cartographer
+x_offset: 0 # This is the offset of your probe from the nozzle tip, to the centre of the coil.
+y_offset: 22.1 # This is the offset of your probe from the nozzle tip, to the centre of the coil.
+verbose: yes # For extra output
+
+
+[tmc2209 stepper_z]
+uart_pin: PC6
+interpolate: False
+run_current: 0.6
+sense_resistor: 0.110
+stealthchop_threshold: 0
+
+##  Z1 Stepper - Rear Center
+##  Connected to MOTOR_3
+[stepper_z1]
+step_pin: PG4
+dir_pin: !PC1
+enable_pin: !PA0
+# Rotation Distance for TR8x8 = 8, TR8x4 = 4, TR8x2 = 2
+rotation_distance: 4
+microsteps: 32
+
+##  Make sure to update below for your relevant driver (2208 or 2209)
+[tmc2209 stepper_z1]
+uart_pin: PC7
+interpolate: False
+run_current: 0.6
+sense_resistor: 0.110
+stealthchop_threshold: 0
+
+##  Z2 Stepper - Front Right
+##  Connected to MOTOR_4
+[stepper_z2]
+step_pin: PF9
+dir_pin: !PF10
+enable_pin: !PG2
+# Rotation Distance for TR8x8 = 8, TR8x4 = 4, TR8x2 = 2
+rotation_distance: 4
+microsteps: 32
+
+
+##  Make sure to update below for your relevant driver (2208 or 2209)
+[tmc2209 stepper_z2]
+uart_pin: PF2 #Connected to Motor_4
+interpolate: False
+run_current: 0.6
+sense_resistor: 0.110
+stealthchop_threshold: 0
+
+
+
+
+#####################################################################
+#--------------------------Emergency Stop--------------------------__
+[gcode_button emergency_stop]
+pin: ^PG14
+debounce_delay: 0.050
+press_gcode:
+    {action_emergency_stop("Emergency stop button pressed")}
+
+#####################################################################
+#   Bed Heater
+#####################################################################
+
+[heater_bed]
+##  SSR Pin - HE1
+##  Thermistor - TB
+heater_pin: PA3
+## Check what thermistor type you have. See https://www.klipper3d.org/Config_Reference.html#common-thermistors for common thermistor types.
+## Use "Generic 3950" for Keenovo heaters
+sensor_type: Generic 3950
+sensor_pin: PF3
+##  Adjust Max Power so your heater doesn't warp your bed. Rule of thumb is 0.4 watts / cm^2 .  - not applicable to cast aluminum bed.
+max_power: 1.0
+min_temp: 0
+max_temp: 120
+#control: pid
+#pid_kp: 58.437
+#pid_ki: 2.347
+#pid_kd: 363.769
+
+#####################################################################
+#   Chamber Thermistor
+#####################################################################
+
+[temperature_sensor chamber]
+sensor_type: Generic 3950
+sensor_pin: PF5
+min_temp: 0
+max_temp: 100
+gcode_id: C
+
+
+[bed_mesh]
+speed: 300
+horizontal_move_z: 3
+##--------------------------------------------------------------------
+##	Uncomment below for 250mm build
+##mesh_min: 40, 40
+##mesh_max: 210,210
+mesh_min: 30, 30
+mesh_max: 220,220
+##--------------------------------------------------------------------
+#fade_start: 0.6
+#fade_end: 10.0
+probe_count: 20, 20
+adaptive_margin: 10
+mesh_pps: 0,0 # Disable interpolation - mesh is probably dense enough
+algorithm: bicubic
+#relative_reference_index: 40   DEPRECIATED
+zero_reference_position: 125, 125
+#move_check_distance: 3
+#split_delta_z: 0.0125
+
+[temperature_sensor cartographer]
+sensor_type: temperature_mcu
+sensor_mcu: cartographer
+min_temp: 5
+max_temp: 105
+
+[adxl345]
+# Select 1 of the cs_pin below depending on the probe you have.
+# Having the wrong one selected will cause an Endless Bootloop
+# Cartographer V4 has int2 connected to the probes PA1 pin
+cs_pin: cartographer:PA3 # For Cartographer V3
+#cs_pin: cartographer:PA0 # For Cartographer V4
+spi_bus: spi1
+
+[resonance_tester]
+accel_chip: adxl345
+probe_points:
+    125, 125, 20 # Fill out the blank with x and y coordinates where you want to run the resonance test.
+
+#####################################################################
+#   Fan Control
+#####################################################################
+
+# Hot end fan and part cooling fan are in BTT36
+
+[controller_fan controller_fan]
+##  Controller fan - FAN2
+pin: PD12
+kick_start_time: 0.5
+max_power: 0.2
+heater: heater_bed
+
+
+[fan_generic Nevermore]
+pin:PD13
+max_power:1.0
+shutdown_speed: 0.0
+
+# Moved to bedfans.cfg
+#[fan_generic bed_fan]
+#pin:PD15
+#max_power:1.0
+#shutdown_speed: 0.0
+
+#[fan_generic exhaust_fan]
+#pin:PD14
+#max_power:1.0
+#shutdown_speed: 0.0
+
+
+#[temperature_sensor chamber_2]
+#sensor_type: PT1000 #Generic 3950
+#sensor_pin: PF7
+#min_temp: 0
+#max_temp: 100
+#gcode_id: D
+
+[temperature_fan chamberfan]
+pin: PD14
+max_power: 1.0
+shutdown_speed: 0.0
+kick_start_time: 5.0
+cycle_time:0.01
+off_below:0.1
+sensor_type: PT1000
+sensor_pin: PF7
+min_temp: 0
+max_temp: 75          # Klipper shuts down above this - was 70
+target_temp: 55.0
+control: watermark
+gcode_id: D
+
+#Add another section with a new macro.
+
+#[gcode_macro M141]
+#gcode:
+   #{% set s = params.S|default(0)|float %}
+   # SET_TEMPERATURE_FAN_TARGET temperature_fan="chamberfan" target={s}
+
+
+
+
+#   See the "fan" section for a description of the above parameters.
+
+#####################################################################
+#   LED Control
+#####################################################################
+
+[output_pin caselight]
+# Chamber Lighting - FAN0 connector (PA8), a real 2-pin JST-XH fan header.
+# Simple always-on 24V LED board (FlashForge AD5X replacement chamber
+# light, non-addressable, single 24V input). FAN0 is free on this Trident
+# because the part-cooling and hotend fans both live on the EBBCan
+# toolboard now (can0:FAN0 / can0:FAN1 in toolhead_btt_ebbcan_G0B1_v1.2.cfg)
+# -- confirmed against printer_cfg_copper_backups/printer_copper.cfg,
+# which had this mainboard FAN0 wired to the print cooling fan before that
+# move (pin: PA8).
+#
+# IMPORTANT: unlike the heater outputs, Octopus fan headers get their
+# supply voltage from an onboard jumper block (labelled near the fan
+# headers, selects VIN/24V vs 12V vs 5V) -- double check that jumper is
+# set to VIN/24V before plugging in a 24V light, or it'll get starved.
+# Most Voron builds already run fans at 24V so it's likely already correct.
+#
+# (HE2/PB10 also works electrically for this and was the original plan,
+# but it's not a JST-XH connector on this board -- left here as a fallback
+# if you ever want the fan header for something else instead:
+#   pin: PB10
+# )
+pin: PA8
+pwm:true
+shutdown_value: 0
+value:1
+cycle_time: 0.01
+
+#####################################################################
+#   Homing and Gantry Adjustment Routines
+#####################################################################
+
+[idle_timeout]
+timeout: 1800
+
+[safe_z_home]
+home_xy_position: 125, 125 # This should be for the CENTRE OF YOUR BED.
+speed:100
+z_hop:10
+
+[z_tilt]
+##  Use Z_TILT_ADJUST to level the bed .
+##  z_positions: Location of toolhead
+
+##--------------------------------------------------------------------
+## Uncomment below for 250mm build
+z_positions:
+    -50, 18
+    125, 298
+    300, 18
+points:
+    30, 5
+    125, 195
+    220, 5
+
+##--------------------------------------------------------------------
+
+speed: 200
+horizontal_move_z: 10
+retries: 3
+retry_tolerance: 0.02
+
+
+
+#####################################################################
+#   Macros
+#####################################################################
+
+[skew_correction]
+
+
+[gcode_macro _PRINT_VARS]
+# Stores print session variables that need to survive TURN_OFF_HEATERS
+variable_chamber_target: 55
+gcode:
+    # intentionally empty
+
+[gcode_macro PRINT_START]
+gcode:
+
+
+    {% set BED_TEMP = params.BED_TEMP|default(60)|float %}
+    {% set EXTRUDER_TEMP = params.EXTRUDER_TEMP|default(210)|float %}
+    {% set CHAMBER_TEMP_MIN = params.CHAMBER_TEMP_MIN|default(32)|float %}
+    {% set CHAMBER_TEMP_MAX = params.CHAMBER_TEMP|default(55)|float %}
+     {% set PROBINGTOUCHTEMP = 120 %}
+     {% set PROBINGTOUCHTEMPPLUS = PROBINGTOUCHTEMP+5 %}
+     {% set PROBINGTOUCHTEMPMINUS = PROBINGTOUCHTEMP-5 %}
+     {% set saved_clean_nozzle = printer.save_variables.variables.clean_nozzle|default(0)|int %}
+     {% set do_clean_nozzle = params.CLEAN_NOZZLE|default(saved_clean_nozzle)|int %}   # driven by TOGGLE_NOZZLE_CLEAN button; slicer param overrides if passed
+
+    SET_GCODE_OFFSET Z=0                                 # Set offset to 0
+    STATUS_HOMING ; Cyan logo and white nozzle
+    G28
+    G90
+
+    BED_MESH_CLEAR                                       # Clear old saved bed mesh (if any)
+
+    SKEW_PROFILE LOAD=Skew1                              # XY skew correction (cleared in PRINT_END / CANCEL_PRINT)
+
+
+    ### controlled cooling of the chamber
+
+    SET_DISPLAY_TEXT MSG="CHAMBER TARGET TEMP: {CHAMBER_TEMP_MAX}C"
+    SET_TEMPERATURE_FAN_TARGET temperature_fan="chamberfan" target={CHAMBER_TEMP_MAX}
+    SET_GCODE_VARIABLE MACRO=_PRINT_VARS VARIABLE=chamber_target VALUE={CHAMBER_TEMP_MAX}  ; save for use in PRINT_END
+    ###
+
+         ### Controlled Heating
+    SET_FAN_SPEED FAN=Nevermore SPEED=.5
+
+    G0 X125 Y125 Z30 F3600          # Move to safe center position
+
+    # Pre-heat hotend to probing temperature (non-blocking + tolerance)
+    SET_DISPLAY_TEXT MSG="Heating Hot End: {PROBINGTOUCHTEMP}C"
+    M104 S{PROBINGTOUCHTEMP}                       # Set target extruder temp but do NOT wait
+
+    # Start bed heating (unchanged)
+    SET_DISPLAY_TEXT MSG="Heating Bed: {BED_TEMP}C"
+    M190 S{BED_TEMP}                # Wait for bed (still blocking; adjust PID if needed)
+
+    TEMPERATURE_WAIT SENSOR=extruder MINIMUM={PROBINGTOUCHTEMPMINUS}   # Proceed once within +- ~5 °C tolerance - just in case bed was hot.
+    TEMPERATURE_WAIT SENSOR=extruder MAXIMUM={PROBINGTOUCHTEMPPLUS}
+
+    ## Set and wait for chamber to reach temperature
+    SET_DISPLAY_TEXT MSG="Heatsoak: {CHAMBER_TEMP_MIN}C"
+    TEMPERATURE_WAIT SENSOR="temperature_sensor chamber" MINIMUM={CHAMBER_TEMP_MIN}
+    ### end Controlled Heating
+
+    SET_DISPLAY_TEXT MSG="Z Tilt Leveling"
+    STATUS_LEVELING ; Pink logo and white nozzle
+    Z_TILT_ADJUST # z_tilt with a dirty nozzle
+    G28 Z                                                # Home Z again after Z_TILT_ADJUST
+
+    G90                            ; absolute positioning
+
+    SET_DISPLAY_TEXT MSG="Bed mesh"                      # Display info on display
+    STATUS_MESHING                                       # Set LEDs to bed mesh-mode
+    BED_MESH_CALIBRATE                                   # Start the bed mesh (add ADAPTIVE=1) for adaptive bed mesh
+
+
+     # Nozzle Cleaning
+    {% if do_clean_nozzle %}
+    SET_DISPLAY_TEXT MSG="Heating Hot End: 240C"
+    M104 S245                       # Set target but do NOT wait
+    G0X240.Y245.
+    TEMPERATURE_WAIT SENSOR=extruder MINIMUM=240   # Proceed once within ~5 °C tolerance.
+
+    M117 Cleaning nozzle
+    STATUS_CLEANING
+    CLEAN_NOZZLE
+    {% else %}
+    M117 Skipping nozzle clean
+    {% endif %}
+    # End Nozzle Cleaning
+
+
+    M104 S{PROBINGTOUCHTEMP}                       # Set target but do NOT wait
+    SET_DISPLAY_TEXT MSG="Heating Hot End: {PROBINGTOUCHTEMP}"
+    TEMPERATURE_WAIT SENSOR=extruder MAXIMUM={PROBINGTOUCHTEMPPLUS}   # Proceed once within ~5 °C tolerance - just in case bed was hot.
+    M106 S0
+
+    SET_DISPLAY_TEXT MSG="Cartographer Touch Z"
+    CARTOGRAPHER_TOUCH_HOME # Calibrate z offset only with hot nozzle
+
+
+
+    M140 S{BED_TEMP} # heat bed, do not wait.
+        SET_DISPLAY_TEXT MSG="Heating Hot End: {EXTRUDER_TEMP}C"
+    M109 S{ EXTRUDER_TEMP }  ; Wait for nozzle to get to target temperature.
+        SET_DISPLAY_TEXT MSG="Heating Bed: {BED_TEMP}C"
+    M190 S{BED_TEMP}
+
+
+   # G28 Z
+
+    STATUS_PRINTING
+    SET_FAN_SPEED FAN=Nevermore SPEED=.25
+    M117 Purging
+    PURGE_LINE
+    M117 PRINTING
+
+
+#--------------------------------------------------------------------
+
+[save_variables]
+# Adjust this path if your install uses a different config directory
+# (e.g. /home/pi/klipper_config/variables.cfg on older installs).
+filename: ~/printer_data/config/variables.cfg
+
+[gcode_macro TOGGLE_NOZZLE_CLEAN]
+description: Toggle whether PRINT_START runs the nozzle scrub - persists across restarts, shows as a button in Fluidd's Macros panel
+gcode:
+    {% set current = printer.save_variables.variables.clean_nozzle|default(0)|int %}
+    {% set new_val = 0 if current else 1 %}
+    SAVE_VARIABLE VARIABLE=clean_nozzle VALUE={new_val}
+    {% if new_val %}
+        RESPOND MSG="Nozzle clean: ON (will scrub at next PRINT_START)"
+        M117 Nozzle clean: ON
+    {% else %}
+        RESPOND MSG="Nozzle clean: OFF (will skip scrub at next PRINT_START)"
+        M117 Nozzle clean: OFF
+    {% endif %}
+
+[gcode_macro PRINT_END]
+#   Use PRINT_END for the slicer ending script - please customise for your slicer of choice
+gcode:
+ 
+    SET_FAN_SPEED FAN=Nevermore SPEED=1.0
+    SET_DISPLAY_TEXT MSG="CHAMBER AIR FILTERING"
+
+    # safe anti-stringing move coords
+    {% set th = printer.toolhead %}
+    {% set x_safe = th.position.x + 20 * (1 if th.axis_maximum.x - th.position.x > 20 else -1) %}
+    {% set y_safe = th.position.y + 20 * (1 if th.axis_maximum.y - th.position.y > 20 else -1) %}
+    {% set z_safe = [th.position.z + 12, th.axis_maximum.z]|min %}
+    {% set cooldown_target = printer["gcode_macro _PRINT_VARS"].chamber_target - 5|default(50)|float %}  ; read saved target - immune to TURN_OFF_HEATERS
+
+    SET_SKEW CLEAR=1
+    SAVE_GCODE_STATE NAME=STATE_PRINT_END
+
+    M400                           ; wait for buffer to clear
+    G92 E0                         ; zero the extruder
+    G1 E-2.0 F3600                 ; retract filament
+
+    TURN_OFF_HEATERS
+
+    G90                                      ; absolute positioning
+    G0 X{x_safe} Y{y_safe} Z{z_safe} F20000  ; move nozzle to remove stringing
+    G0 X{th.axis_maximum.x//2} Y{th.axis_maximum.y - 2} F3600  ; park nozzle at rear
+    M107                                     ; turn off fan
+
+    BED_MESH_CLEAR
+    RESTORE_GCODE_STATE NAME=STATE_PRINT_END
+
+    G4 P60000                      ; Dwell 1 min so Nevermore can filter chamber air then turn on the exhaust fan
+
+    # === Cooldown logic ===
+    # Capture chamberfan target set in PRINT_START minus 5 °C.
+    SET_DISPLAY_TEXT MSG="COOLDOWN CHAMBER TARGET TEMP: {cooldown_target}C"
+    SET_TEMPERATURE_FAN_TARGET temperature_fan="chamberfan" target={cooldown_target}
+
+    SET_FAN_SPEED FAN=Nevermore SPEED=0
+    #SET_FAN_SPEED FAN=exhaust_fan SPEED=0 #not used anymore
+    SET_GCODE_VARIABLE MACRO=_MANUAL_TOOL VARIABLE=current VALUE=-1   ; forget loaded filament slot
+
+#####################################################################
+#   Cancel Print - raise Z 50mm, or home Z if that would over-travel
+#####################################################################
+# NOTE: this section MERGES with fluidd.cfg's [gcode_macro CANCEL_PRINT] and
+# its gcode REPLACES Fluidd's entirely. CANCEL_PRINT_BASE is Klipper's built-in
+# cancel, which does NOT turn off heaters/fans - so that's done here.
+# Also used by virtual_sdcard on_error_gcode.
+
+[gcode_macro CANCEL_PRINT]
+description: Cancel the actual running print
+rename_existing: CANCEL_PRINT_BASE
+gcode:
+    _CLIENT_RETRACT LENGTH=5         ; retract (Fluidd helper, skips if nozzle is cold)
+    TURN_OFF_HEATERS                 ; also turns bed fans off (bedfans.cfg override)
+    M106 S0                          ; part cooling fan off
+    SET_SKEW CLEAR=1
+    SET_IDLE_TIMEOUT TIMEOUT={printer.configfile.settings.idle_timeout.timeout}  ; undo 12h timeout if cancelled while paused
+    UPDATE_DELAYED_GCODE ID=_M600_HEATER_TIMEOUT DURATION=0
+    SET_GCODE_VARIABLE MACRO=_MANUAL_TOOL VARIABLE=current VALUE=-1
+    RESPOND TYPE=command MSG="action:prompt_end"
+    CANCEL_PRINT_BASE
+    {% set current_z = printer.toolhead.position.z|float %}
+    {% set max_z = printer.toolhead.axis_maximum.z|float %}
+    {% if current_z + 50 <= max_z %}
+        G91                          ; relative positioning
+        G1 Z50 F900                  ; raise Z 50mm (900mm/min = configured max_z_velocity)
+        G90                          ; absolute positioning
+    {% else %}
+        G28 Z                       ; not enough headroom, home Z instead
+    {% endif %}
+
+#####################################################################
+#   Go to Maintenance position Macro
+#####################################################################
+
+[gcode_macro MAINT_POS]
+  gcode:
+        G0X125.Y0.Z240.
+
+#####################################################################
+#   Pause and Resume Macros for fillament sensor
+#####################################################################
+
+
+[pause_resume]
+recover_velocity: 50.
+#   When capture/restore is enabled, the speed at which to return to
+#   the captured position (in mm/s). Default is 50.0 mm/s.
+
+[gcode_macro M600]
+description: Manual filament/color change. Slicer: change filament G-code = M600 T[next_extruder]
+gcode:
+    {% set tool = params.T|default(-1)|int %}
+    {% set cur = printer["gcode_macro _MANUAL_TOOL"].current|int %}
+    {% if tool >= 0 and tool == cur %}
+        RESPOND MSG="M600: T{tool} is already loaded - no change needed"
+    {% elif printer.pause_resume.is_paused %}
+        RESPOND MSG="M600: already paused"
+    {% elif printer.print_stats.state != "printing" %}
+        RESPOND TYPE=error MSG="M600 only works during a print. Use UNLOAD_FILAMENT / LOAD_FILAMENT instead."
+    {% else %}
+        {% if tool >= 0 %}
+        SET_GCODE_VARIABLE MACRO=_MANUAL_TOOL VARIABLE=current VALUE={tool}
+        {% endif %}
+        PAUSE X=185 Y=257 Z_MIN=10 HEATER_OFF=0   ; park over the rear purge bucket, keep hotend hot
+        UNLOAD_FILAMENT
+        UPDATE_DELAYED_GCODE ID=_M600_HEATER_TIMEOUT DURATION=900   ; hotend off after 15 min if nobody comes
+        _M600_PROMPT T={tool}
+    {% endif %}
+
+[gcode_macro _M600_PROMPT]
+gcode:
+    {% set tool = params.T|default(-1)|int %}
+    {% set what = "filament %d (T%d)" % (tool + 1, tool) if tool >= 0 else "the next filament" %}
+    RESPOND MSG="Filament change: load {what}, then press RESUME"
+    RESPOND TYPE=command MSG="action:prompt_begin Filament change"
+    RESPOND TYPE=command MSG="action:prompt_text Old filament is unloaded. Insert {what}, press Load, purge until the color is clean, then Resume."
+    RESPOND TYPE=command MSG="action:prompt_button_group_start"
+    RESPOND TYPE=command MSG="action:prompt_button Unload|UNLOAD_FILAMENT|secondary"
+    RESPOND TYPE=command MSG="action:prompt_button Load|LOAD_FILAMENT|primary"
+    RESPOND TYPE=command MSG="action:prompt_button Purge 25mm|_PURGE_MORE|info"
+    RESPOND TYPE=command MSG="action:prompt_button_group_end"
+    RESPOND TYPE=command MSG="action:prompt_footer_button Resume|RESUME|success"
+    RESPOND TYPE=command MSG="action:prompt_show"
+
+[delayed_gcode _M600_HEATER_TIMEOUT]
+gcode:
+    {% if printer.pause_resume.is_paused %}
+        M104 S0
+        RESPOND MSG="Filament change: hotend turned off after 15 min. Load / Resume will reheat it."
+    {% endif %}
+
+[gcode_macro _ENSURE_HOT]
+description: Helper: during a pause, reheat to the print temperature; otherwise require a hot nozzle
+gcode:
+    {% set etemp = printer["gcode_macro RESUME"].etemp|float %}
+    {% set min_t = printer.configfile.settings.extruder.min_extrude_temp|float %}
+    {% if printer.pause_resume.is_paused and etemp > 0 %}
+        {% if printer.extruder.target < etemp or printer.extruder.temperature < etemp - 5 %}
+            RESPOND MSG="Heating hotend to {etemp|int}C"
+            M109 S{etemp}
+        {% endif %}
+        UPDATE_DELAYED_GCODE ID=_M600_HEATER_TIMEOUT DURATION=900   ; restart the 15 min timer
+    {% elif printer.extruder.temperature < min_t %}
+        { action_raise_error("Hotend is below %dC - heat it first" % min_t) }
+    {% endif %}
+
+[gcode_macro _PURGE_MORE]
+gcode:
+    _ENSURE_HOT
+    SAVE_GCODE_STATE NAME=purge_more
+    M83
+    G1 E25 F300
+    RESTORE_GCODE_STATE NAME=purge_more
+
+[gcode_macro _MANUAL_TOOL]
+description: Helper: remembers which filament slot (T0-T3) is loaded
+variable_current: -1
+gcode:
+    {% set t = params.T|int %}
+    SET_GCODE_VARIABLE MACRO=_MANUAL_TOOL VARIABLE=current VALUE={t}
+    RESPOND MSG="Active filament: T{t}"
+
+[gcode_macro PAUSE]
+rename_existing: BASE_PAUSE
+gcode:
+    # Parameters: Z=hop (10)  X/Y=park position (front centre)  Z_MIN=lowest park height  HEATER_OFF=1 turns hotend off
+    {% set z = params.Z|default(10)|float %}
+    {% set z_min = params.Z_MIN|default(0)|float %}
+    {% set park_x = params.X|default(printer.toolhead.axis_maximum.x/2)|float %}
+    {% set park_y = params.Y|default(printer.toolhead.axis_minimum.y+5)|float %}
+    {% set heater_off = params.HEATER_OFF|default(1)|int %}
+    {% set pos = printer.gcode_move.gcode_position %}
+    {% set z_park = [[pos.z + z, z_min]|max, printer.toolhead.axis_maximum.z - 1]|min %}
+
+    {% if printer['pause_resume'].is_paused|int == 0 %}
+        SET_GCODE_VARIABLE MACRO=RESUME VARIABLE=zhop VALUE={z_park - pos.z}                 ; set z hop variable for reference in resume macro
+        SET_GCODE_VARIABLE MACRO=RESUME VARIABLE=etemp VALUE={printer['extruder'].target}    ; set hotend temp variable for reference in resume macro
+        SET_GCODE_VARIABLE MACRO=RESUME VARIABLE=pos_x VALUE={pos.x}                         ; where to go back to (XY first, then Z)
+        SET_GCODE_VARIABLE MACRO=RESUME VARIABLE=pos_y VALUE={pos.y}
+        SAVE_GCODE_STATE NAME=PAUSE                                                          ; save current print position for resume
+        BASE_PAUSE                                                                           ; pause print
+        G90                                                                                  ; absolute positioning
+        G1 Z{z_park} F900                                                                    ; lift first
+        G1 X{park_x} Y{park_y} F6000                                                         ; then park
+        SAVE_GCODE_STATE NAME=PAUSEPARK                                                      ; save parked position in case toolhead is moved during the pause
+        {% if heater_off %}
+        M104 S0                                                                              ; turn off hotend
+        {% endif %}
+        SET_IDLE_TIMEOUT TIMEOUT=43200                                                       ; set timeout to 12 hours
+    {% endif %}
+
+[gcode_macro RESUME]
+rename_existing: BASE_RESUME
+variable_zhop: 0
+variable_etemp: 0
+variable_pos_x: 0
+variable_pos_y: 0
+gcode:
+    # Parameters
+    {% set e = params.E|default(2.5)|float %}
+
+    {% if printer['pause_resume'].is_paused|int == 1 %}
+        RESPOND TYPE=command MSG="action:prompt_end"                                 ; close the filament-change dialog
+        UPDATE_DELAYED_GCODE ID=_M600_HEATER_TIMEOUT DURATION=0                      ; cancel the hotend-off timer
+        SET_IDLE_TIMEOUT TIMEOUT={printer.configfile.settings.idle_timeout.timeout}  ; set timeout back to configured value
+        {% if etemp > 0 %}
+            M109 S{etemp|int}                                                        ; wait for hotend to heat back up
+        {% endif %}
+        RESTORE_GCODE_STATE NAME=PAUSEPARK MOVE=1 MOVE_SPEED=100                     ; back to the parked position in case toolhead was moved during pause
+        M83                                                                          ; relative extruder positioning
+        {% if printer[printer.toolhead.extruder].temperature >= printer.configfile.settings.extruder.min_extrude_temp %}
+            G1 E{e} F300                                                             ; prime nozzle at the park position
+        {% endif %}
+        G90
+        G1 X{pos_x} Y{pos_y} F6000                                                   ; travel back at park height (never lowers Z near the bucket)
+        RESTORE_GCODE_STATE NAME=PAUSE MOVE=1 MOVE_SPEED=60                          ; lower Z and restore print state
+        BASE_RESUME                                                                  ; resume print
+    {% endif %}
+
+
+
+
+######################################################################
+# Slicer compatibility
+######################################################################
+[gcode_macro M900]
+description: Set pressure advance (Marlin-style M900 K<value>)
+gcode:
+    {% if params.K is defined %}
+        SET_PRESSURE_ADVANCE ADVANCE={params.K|float}
+    {% endif %}
+
+# Manual multicolor: T0-T3 only record which filament is loaded. The pause itself
+# comes from the slicer's "Change filament G-code" (M600 T[next_extruder]), so a
+# tool change never pauses twice.
+[gcode_macro T0]
+gcode:
+    _MANUAL_TOOL T=0
+
+[gcode_macro T1]
+gcode:
+    _MANUAL_TOOL T=1
+
+[gcode_macro T2]
+gcode:
+    _MANUAL_TOOL T=2
+
+[gcode_macro T3]
+gcode:
+    _MANUAL_TOOL T=3
+
+
+[gcode_macro LOAD_FILAMENT]
+gcode:
+    {% set speed = params.SPEED|default(300) %}      # mm/min (5 mm/s) purge
+    {% set fast = params.FAST|default(1800) %}       # mm/min (30 mm/s) - F is mm/min, not mm/s
+    _ENSURE_HOT
+    SAVE_GCODE_STATE NAME=load_state
+    ##M300 # beep
+    G91
+    M83
+    G92 E0
+    G1 E60 F{fast} # fast-load
+    G1 E50 F{speed} # purge
+    ##M300
+    ##M300
+    RESTORE_GCODE_STATE NAME=load_state
+
+
+
+[gcode_macro UNLOAD_FILAMENT]
+gcode:
+    {% set speed = params.SPEED|default(300) %}      # mm/min (5 mm/s) purge
+    {% set fast = params.FAST|default(1800) %}       # mm/min (30 mm/s)
+    _ENSURE_HOT
+    SAVE_GCODE_STATE NAME=unload_state
+    G91
+    M83
+    ##M300 # beep
+    G92 E0
+    G1 E5 F{speed} # purge
+    G1 E-100 F{fast} # fast-unload
+    ##M300
+    ##M300
+    RESTORE_GCODE_STATE NAME=unload_state
+
+[exclude_object]
+
+
+[include dragonbreath.cfg]
+
+#*# <---------------------- SAVE_CONFIG ---------------------->
+#*# DO NOT EDIT THIS BLOCK OR BELOW. The contents are auto-generated.
+#*#
+#*# [heater_bed]
+#*# control = pid
+#*# pid_kp = 63.218
+#*# pid_ki = 2.066
+#*# pid_kd = 483.617
+#*#
+#*# [extruder]
+#*# control = pid
+#*# pid_kp = 44.237
+#*# pid_ki = 10.169
+#*# pid_kd = 48.108
+#*#
+#*# [skew_correction Skew1]
+#*# xy_skew = -0.004106413970630798
+#*# xz_skew = 0.0
+#*# yz_skew = 0.0
+#*#
+#*# [bed_mesh default]
+#*# version = 1
+#*# points =
+#*# 	  0.096592, 0.096592, 0.100507, 0.113795, 0.104419, 0.069166, 0.063386, 0.071333, 0.085784, 0.096592, 0.100321, 0.098457, 0.090701, 0.078076, 0.086951, 0.106371, 0.107068, 0.094631, 0.090701, 0.086768
+#*# 	  0.092665, 0.088922, 0.101299, 0.100321, 0.092665, 0.069166, 0.064380, 0.067271, 0.078881, 0.092665, 0.091683, 0.084982, 0.075110, 0.069256, 0.082025, 0.106186, 0.102462, 0.094631, 0.086951, 0.082828
+#*# 	  0.092665, 0.086768, 0.090701, 0.096592, 0.090701, 0.067181, 0.059403, 0.055414, 0.067361, 0.079064, 0.082920, 0.077088, 0.068263, 0.062300, 0.071333, 0.098550, 0.100507, 0.092665, 0.084982, 0.079064
+#*# 	  0.094631, 0.086768, 0.094538, 0.094631, 0.080856, 0.058407, 0.045594, 0.045594, 0.059403, 0.073131, 0.069256, 0.063386, 0.056412, 0.051603, 0.066368, 0.090701, 0.096499, 0.084982, 0.075110, 0.067361
+#*# 	  0.088736, 0.081039, 0.083905, 0.090794, 0.078881, 0.055414, 0.041579, 0.037740, 0.053602, 0.063386, 0.061396, 0.055414, 0.049602, 0.045594, 0.061396, 0.084799, 0.088736, 0.077088, 0.067181, 0.063386
+#*# 	  0.090701, 0.079064, 0.081039, 0.090701, 0.077088, 0.043588, 0.031693, 0.033710, 0.046503, 0.053416, 0.047599, 0.045594, 0.041579, 0.041579, 0.055414, 0.078076, 0.079064, 0.069166, 0.063386, 0.057595
+#*# 	  0.086951, 0.073131, 0.073131, 0.081039, 0.069346, 0.038563, 0.021762, 0.025722, 0.037740, 0.042583, 0.029674, 0.025630, 0.029491, 0.031693, 0.043588, 0.065194, 0.071241, 0.061396, 0.055414, 0.051603
+#*# 	  0.081933, 0.067361, 0.069346, 0.074120, 0.061305, 0.027653, 0.017524, 0.013638, 0.019734, 0.021762, 0.017704, 0.009569, 0.009749, 0.015672, 0.033710, 0.053602, 0.055506, 0.051603, 0.045594, 0.041579
+#*# 	  0.082828, 0.065374, 0.063386, 0.071149, 0.057410, 0.025814, 0.007529, 0.003625, 0.007710, 0.008549, 0.007710, 0.003444, 0.001580, 0.003444, 0.017704, 0.043588, 0.046596, 0.041579, 0.037740, 0.035543
+#*# 	  0.083011, 0.063386, 0.061396, 0.065284, 0.045594, 0.019554, 0.003625, -0.009606, -0.006615, -0.000644, 0.001580, -0.002511, -0.006615, -0.004562, 0.010676, 0.031510, 0.037557, 0.033710, 0.029674, 0.027653
+#*# 	  0.083905, 0.065194, 0.057595, 0.057410, 0.047599, 0.013638, 0.000559, -0.012601, -0.012780, -0.004562, 0.003625, 0.003625, -0.004562, -0.012601, 0.003444, 0.027653, 0.031693, 0.027653, 0.023789, 0.023697
+#*# 	  0.092665, 0.069346, 0.060492, 0.061396, 0.046596, 0.017524, -0.000462, -0.008669, -0.006615, -0.002511, 0.002512, 0.003625, -0.001487, -0.010543, 0.003535, 0.029674, 0.035726, 0.028663, 0.023605, 0.023605
+#*# 	  0.098457, 0.077088, 0.071149, 0.071333, 0.052509, 0.024618, 0.011602, 0.009569, 0.006689, 0.007710, 0.009569, 0.011602, 0.006508, -0.003627, 0.009569, 0.035543, 0.042583, 0.037557, 0.031693, 0.029674
+#*# 	  0.102462, 0.086768, 0.081039, 0.080856, 0.059403, 0.033710, 0.023789, 0.023605, 0.025814, 0.026641, 0.025630, 0.025630, 0.020566, 0.011602, 0.024618, 0.049602, 0.056504, 0.047599, 0.039569, 0.035726
+#*# 	  0.107253, 0.088736, 0.086951, 0.090701, 0.073223, 0.045594, 0.031693, 0.033710, 0.040574, 0.043588, 0.040665, 0.037557, 0.027653, 0.018629, 0.033619, 0.053416, 0.059403, 0.052509, 0.043588, 0.039569
+#*# 	  0.112030, 0.098364, 0.098550, 0.104234, 0.084982, 0.049602, 0.041579, 0.045594, 0.051603, 0.055414, 0.051417, 0.049509, 0.039569, 0.027745, 0.042583, 0.062391, 0.062391, 0.053602, 0.047413, 0.043588
+#*# 	  0.119711, 0.110084, 0.110084, 0.113979, 0.098550, 0.071149, 0.055506, 0.051603, 0.061396, 0.063386, 0.063386, 0.059403, 0.049602, 0.039751, 0.049602, 0.067181, 0.073223, 0.065374, 0.055414, 0.051603
+#*# 	  0.132970, 0.119619, 0.117679, 0.125432, 0.110084, 0.080051, 0.063386, 0.061396, 0.071149, 0.071333, 0.071333, 0.070248, 0.061396, 0.049602, 0.061215, 0.077088, 0.079064, 0.071149, 0.061396, 0.057410
+#*# 	  0.140672, 0.127365, 0.123497, 0.129296, 0.115738, 0.089812, 0.073131, 0.067361, 0.073131, 0.076099, 0.074120, 0.073131, 0.063386, 0.057410, 0.059403, 0.078076, 0.083011, 0.075110, 0.065374, 0.060492
+#*# 	  0.150070, 0.133157, 0.134028, 0.134900, 0.119803, 0.092665, 0.077088, 0.073131, 0.077088, 0.081039, 0.080947, 0.079064, 0.069346, 0.056504, 0.067361, 0.083011, 0.084982, 0.079064, 0.071149, 0.065374
+#*# x_count = 20
+#*# y_count = 20
+#*# mesh_x_pps = 0
+#*# mesh_y_pps = 0
+#*# algo = bicubic
+#*# tension = 0.2
+#*# min_x = 30.0
+#*# max_x = 220.0
+#*# min_y = 30.0
+#*# max_y = 220.0
+#*#
+#*# [input_shaper]
+#*# shaper_type_x = mzv
+#*# shaper_freq_x = 61.2
+#*# shaper_type_y = 2hump_ei
+#*# shaper_freq_y = 65.2
+#*#
+#*# [cartographer scan_model default]
+#*# coefficients = 1.4392854511811515,1.9218357910852808,0.8694711971784144,0.4249114271312626,0.34612164675900864,0.3241238715121648,-0.07504102003046169,-0.15140709267859398,0.22130216434343533,0.18258146151519464
+#*# domain = 3.21565763027139e-07,3.3398720485353187e-07
+#*# z_offset = 0
+#*# reference_temperature = 43.66
+#*# software_version = 1.10.1
+#*# mcu_version = CARTOGRAPHER V3 6.1.0
+#*#
+#*# [cartographer touch_model default]
+#*# threshold = 1504
+#*# speed = 2.0
+#*# z_offset = -0.05
+#*# samples = 3
+#*# sample_range = 0.01
+#*# software_version = 1.10.1
+#*# mcu_version = CARTOGRAPHER V3 6.1.0
